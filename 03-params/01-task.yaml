@@ -1,0 +1,25 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: greetings-task
+spec:
+  inputs:
+    params:
+      - name: greetings
+        type: string
+        default: hello
+  steps:
+    - name: step-1
+      image: busybox
+      command:
+        - echo
+      args:
+        - $(inputs.params.greetings), world
+
+    - name: step-2-run-a-script
+      image: busybox
+      script: |
+        #!/bin/sh
+        set +x
+        echo "$(inputs.params.greetings), I am at $(pwd)"

@@ -1,0 +1,8 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: helloworld-taskrun-03
+spec:
+  taskRef:
+    name: helloworld-task

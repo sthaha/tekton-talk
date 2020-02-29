@@ -1,0 +1,22 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: build-push-image-0501
+spec:
+  taskRef:
+    name: build-push-image
+
+  inputs:
+    params:
+      - name: app
+        value: voting-ui
+    resources:
+      - resourceRef:
+          name: ui-repo
+        name: src
+  outputs:
+    resources:
+      - name: img
+        resourceRef:
+          name: ui-image

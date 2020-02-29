@@ -1,0 +1,231 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/networks-status: ""
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"tekton.dev/v1alpha1","kind":"TaskRun","metadata":{"annotations":{},"name":"helloworld-taskrun-01","namespace":"tekton-talk"},"spec":{"taskSpec":{"steps":[{"args":["hello world"],"command":["echo"],"image":"busybox","name":"echo"}]}}}
+    openshift.io/scc: restricted
+    tekton.dev/ready: READY
+    tekton.dev/release: devel
+  creationTimestamp: "2020-02-27T13:19:35Z"
+  labels:
+    app.kubernetes.io/managed-by: tekton-pipelines
+    tekton.dev/taskRun: helloworld-taskrun-01
+  name: helloworld-taskrun-01-pod-j7ppb
+  namespace: tekton-talk
+  ownerReferences:
+  - apiVersion: tekton.dev/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: TaskRun
+    name: helloworld-taskrun-01
+    uid: cc7ee169-5963-11ea-b3a1-52fdfc072182
+  resourceVersion: "3462830"
+  selfLink: /api/v1/namespaces/tekton-talk/pods/helloworld-taskrun-01-pod-j7ppb
+  uid: cc82c9e0-5963-11ea-b3a1-52fdfc072182
+spec:
+  containers:
+    - name: step-echo
+      image: busybox
+      args:
+        - -wait_file
+        - /tekton/downward/ready
+        - -wait_file_content
+        - -post_file
+        - /tekton/tools/0
+        - -termination_path
+        - /tekton/termination
+        - -entrypoint
+        - echo
+        - --
+        - hello world
+      command: [/tekton/tools/entrypoint]
+      env:
+        - name: HOME
+          value: /tekton/home
+      imagePullPolicy: Always
+
+      terminationMessagePath: /tekton/termination
+      terminationMessagePolicy: File
+
+      volumeMounts:
+        - mountPath: /tekton/tools
+          name: tekton-internal-tools
+        - mountPath: /tekton/downward
+          name: tekton-internal-downward
+        - mountPath: /workspace
+          name: tekton-internal-workspace
+        - mountPath: /tekton/home
+          name: tekton-internal-home
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: pipeline-token-xq22z
+          readOnly: true
+      workingDir: /workspace
+
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  imagePullSecrets:
+    - name: pipeline-dockercfg-ql7xr
+  initContainers:
+    - args:
+      - -docker-cfg=pipeline-dockercfg-ql7xr
+      command:
+      - /ko-app/creds-init
+      env:
+      - name: HOME
+        value: /tekton/home
+      image: quay.io/openshift-pipeline/tektoncd-pipeline-creds-init:v0.10.1
+      imagePullPolicy: IfNotPresent
+      name: credential-initializer
+      resources: {}
+      securityContext:
+        capabilities:
+          drop:
+          - KILL
+          - MKNOD
+          - SETGID
+          - SETUID
+        runAsUser: 1000590000
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /workspace
+        name: tekton-internal-workspace
+      - mountPath: /tekton/home
+        name: tekton-internal-home
+      - mountPath: /tekton/creds-secrets/pipeline-dockercfg-ql7xr
+        name: tekton-internal-secret-volume-pipeline-dockercfg-ql7xr
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: pipeline-token-xq22z
+        readOnly: true
+    - command:
+        - cp
+        - /ko-app/entrypoint
+        - /tekton/tools/entrypoint
+      image: quay.io/openshift-pipeline/tektoncd-pipeline-entrypoint:v0.10.1
+      imagePullPolicy: IfNotPresent
+      name: place-tools
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+        - mountPath: /tekton/tools
+          name: tekton-internal-tools
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: pipeline-token-xq22z
+          readOnly: true
+  nodeName: crc-q4zfq-master-0
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext:
+    fsGroup: 1000590000
+    seLinuxOptions:
+      level: s0:c24,c19
+  serviceAccount: pipeline
+  serviceAccountName: pipeline
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+    - emptyDir: {}
+      name: tekton-internal-workspace
+    - emptyDir: {}
+      name: tekton-internal-home
+    - name: tekton-internal-secret-volume-pipeline-dockercfg-ql7xr
+      secret:
+        defaultMode: 420
+        secretName: pipeline-dockercfg-ql7xr
+    - emptyDir: {}
+      name: tekton-internal-tools
+    - downwardAPI:
+        defaultMode: 420
+        items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.annotations['tekton.dev/ready']
+            path: ready
+      name: tekton-internal-downward
+    - name: pipeline-token-xq22z
+      secret:
+        defaultMode: 420
+        secretName: pipeline-token-xq22z
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2020-02-27T13:19:45Z"
+    reason: PodCompleted
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2020-02-27T13:19:52Z"
+    reason: PodCompleted
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2020-02-27T13:19:52Z"
+    reason: PodCompleted
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2020-02-27T13:19:35Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: cri-o://014a6a1c4c45e36651431822986ac314de052272b3e1dd3316b74a0e84ce24e0
+    image: docker.io/library/busybox:latest
+    imageID: docker.io/library/busybox@sha256:6915be4043561d64e0ab0f8f098dc2ac48e077fe23f488ac24b665166898115a
+    lastState: {}
+    name: step-echo
+    ready: false
+    restartCount: 0
+    state:
+      terminated:
+        containerID: cri-o://014a6a1c4c45e36651431822986ac314de052272b3e1dd3316b74a0e84ce24e0
+        exitCode: 0
+        finishedAt: "2020-02-27T13:19:52Z"
+        message: '[{"name":"","digest":"","key":"StartedAt","value":"2020-02-27T13:19:52Z","resourceRef":{}}]'
+        reason: Completed
+        startedAt: "2020-02-27T13:19:51Z"
+  hostIP: 192.168.130.11
+  initContainerStatuses:
+  - containerID: cri-o://36acff344cebd5f3b184c8d7b8f6243625988fbab37b8a330951f7649b3e3ed5
+    image: quay.io/openshift-pipeline/tektoncd-pipeline-creds-init:v0.10.1
+    imageID: quay.io/openshift-pipeline/tektoncd-pipeline-creds-init@sha256:851fd079a51d62119cf6f9c21029232146cfdcf571e3123d2fd89ba9d26223fd
+    lastState: {}
+    name: credential-initializer
+    ready: true
+    restartCount: 0
+    state:
+      terminated:
+        containerID: cri-o://36acff344cebd5f3b184c8d7b8f6243625988fbab37b8a330951f7649b3e3ed5
+        exitCode: 0
+        finishedAt: "2020-02-27T13:19:44Z"
+        reason: Completed
+        startedAt: "2020-02-27T13:19:44Z"
+  - containerID: cri-o://67113c5ee0a2d58e529a6fa6e8c8c82dc533cb3164fbce809a0264c38700021b
+    image: quay.io/openshift-pipeline/tektoncd-pipeline-entrypoint:v0.10.1
+    imageID: quay.io/openshift-pipeline/tektoncd-pipeline-entrypoint@sha256:bba0de567eaf4d85109c088e0a52aacb618ef63f945e2ecc995b4ddb3123d5c6
+    lastState: {}
+    name: place-tools
+    ready: true
+    restartCount: 0
+    state:
+      terminated:
+        containerID: cri-o://67113c5ee0a2d58e529a6fa6e8c8c82dc533cb3164fbce809a0264c38700021b
+        exitCode: 0
+        finishedAt: "2020-02-27T13:19:45Z"
+        reason: Completed
+        startedAt: "2020-02-27T13:19:45Z"
+  phase: Succeeded
+  podIP: 10.128.1.169
+  qosClass: BestEffort
+  startTime: "2020-02-27T13:19:35Z"

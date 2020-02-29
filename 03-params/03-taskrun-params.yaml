@@ -1,0 +1,12 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: greetings-taskrun-0302
+spec:
+  taskRef:
+    name: greetings-task
+  inputs:
+    params:
+      - name: greetings
+        value: hola

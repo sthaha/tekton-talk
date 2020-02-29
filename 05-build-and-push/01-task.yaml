@@ -1,0 +1,83 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-push-image
+spec:
+  inputs:
+    params:
+      - name: app
+        type: string
+        description: name of the application
+
+      - name: buildah-image
+        type: string
+        default: quay.io/buildah/stable:v1.11.0
+        description: The location of the buildah builder image.
+
+      - name: dockerfile
+        type: string
+        default: Dockerfile
+        description: Path to the Dockerfile to build.
+
+      - name: tls-verify
+        type: string
+        default: "false"
+        description: >
+          Verify the TLS on the registry endpoint (for push/pull
+          to a non-TLS registry)
+
+    resources:
+      ### gets checked out to /workspace/src
+      - {name: src, type: git}
+
+  outputs:
+    resources:
+      - name: img
+        type: image
+  steps:
+    - name: info
+      image: busybox
+      script: |
+        #!/bin/sh
+        set +x
+
+        echo Building app   $(inputs.params.app)
+        echo Cloned repo    $(inputs.resources.src.url)
+        echo Output img     $(outputs.resources.img.url)
+        echo ----------------------------------------------
+        env
+        echo ----------------------------------------------
+    # copied from upstream buildah
+
+    - name: build
+      image: $(inputs.params.buildah-image)
+      command: [
+        buildah, bud, --layers,
+        -f, $(inputs.params.dockerfile),
+        -t, $(outputs.resources.img.url), .
+      ]
+      workingDir: /workspace/src
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+      securityContext:
+        privileged: true
+
+    - name: push
+      image: $(inputs.params.buildah-image)
+      workingDir: /workspace/src
+      command: [
+        buildah, push,
+        --tls-verify=$(inputs.params.tls-verify),
+        $(outputs.resources.img.url),
+        docker://$(outputs.resources.img.url)
+      ]
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - mountPath: /var/lib/containers
+          name: varlibcontainers
+  volumes:
+    - emptyDir: {}
+      name: varlibcontainers

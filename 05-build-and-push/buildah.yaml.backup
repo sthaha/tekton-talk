@@ -1,0 +1,81 @@
+apiVersion: tekton.dev/v1alpha1
+kind: ClusterTask
+metadata:
+  annotations:
+    manifestival: new
+  creationTimestamp: "2020-02-27T13:03:59Z"
+  generation: 1
+  labels:
+    operator.tekton.dev/provider-type: redhat
+  name: buildah
+  ownerReferences:
+  - apiVersion: operator.tekton.dev/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Config
+    name: cluster
+    uid: 15b67bdf-58f1-11ea-b3a1-52fdfc072182
+  resourceVersion: "3459630"
+  selfLink: /apis/tekton.dev/v1alpha1/clustertasks/buildah
+  uid: 9e9be948-5961-11ea-b3a1-52fdfc072182
+spec:
+  inputs:
+    params:
+    - default: quay.io/buildah/stable:v1.11.0
+      description: The location of the buildah builder image.
+      name: BUILDER_IMAGE
+      type: string
+    - default: ./Dockerfile
+      description: Path to the Dockerfile to build.
+      name: DOCKERFILE
+      type: string
+    - default: "true"
+      description: Verify the TLS on the registry endpoint (for push/pull to a non-TLS
+        registry)
+      name: TLSVERIFY
+      type: string
+    resources:
+    - name: source
+      type: git
+  outputs:
+    resources:
+    - name: image
+      type: image
+  steps:
+  - command:
+    - buildah
+    - bud
+    - --tls-verify=$(inputs.params.TLSVERIFY)
+    - --layers
+    - -f
+    - $(inputs.params.DOCKERFILE)
+    - -t
+    - $(outputs.resources.image.url)
+    - .
+    image: $(inputs.params.BUILDER_IMAGE)
+    name: build
+    resources: {}
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /var/lib/containers
+      name: varlibcontainers
+    workingDir: /workspace/source
+  - command:
+    - buildah
+    - push
+    - --tls-verify=$(inputs.params.TLSVERIFY)
+    - $(outputs.resources.image.url)
+    - docker://$(outputs.resources.image.url)
+    image: $(inputs.params.BUILDER_IMAGE)
+    name: push
+    resources: {}
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /var/lib/containers
+      name: varlibcontainers
+    workingDir: /workspace/source
+  volumes:
+  - emptyDir: {}
+    name: varlibcontainers

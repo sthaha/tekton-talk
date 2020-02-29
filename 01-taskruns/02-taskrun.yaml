@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: helloworld-taskrun-02
+spec:
+  taskSpec:
+    steps:
+      - name: step-1
+        image: busybox
+        command:
+          - echo
+        args:
+          - hello world
+
+      - name: step-2-run-a-script
+        image: busybox
+        script: |
+          #!/bin/sh
+          set +x
+          echo "I am at $(pwd)"
+
+      - name: step-4-run-py
+        image: python
+        script: |
+          #!/usr/bin/env python3
+          print("I can run 🐍 scripts")
+
+      - name: step-4-run-node
+        image: node
+        script: |
+          #!/usr/bin/env node
+          console.log("can run js scripts as well ♥️")

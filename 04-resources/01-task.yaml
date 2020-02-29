@@ -1,0 +1,27 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-app
+spec:
+  inputs:
+    params:
+      - name: app
+        type: string
+    resources:
+      - name: src
+        type: git
+  outputs:
+    resources:
+      - name: img
+        type: image
+  steps:
+    - name: step-00
+      image: busybox
+      script: |
+        #!/bin/sh
+        set +x
+
+        echo Building app   $(inputs.params.app)
+        echo Going to clone $(inputs.resources.src.url)
+        echo Outputimg      $(outputs.resources.img.url)

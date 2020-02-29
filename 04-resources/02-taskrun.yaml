@@ -1,0 +1,22 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: build-app-0401
+spec:
+  taskRef:
+    name: build-app
+
+  inputs:
+    params:
+      - name: app
+        value: voting-api
+    resources:
+      - resourceRef:
+          name: api-repo
+        name: src
+  outputs:
+    resources:
+      - resourceRef:
+          name: api-image
+        name: img

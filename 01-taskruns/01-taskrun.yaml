@@ -1,0 +1,14 @@
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TaskRun
+metadata:
+  name: helloworld-taskrun-01
+spec:
+  taskSpec:
+    steps:
+      - name: echo
+        image: busybox
+        command:
+          - echo
+        args:
+          - hello world

@@ -8,13 +8,18 @@ spec:
     params:
       - name: app
         type: string
+
+    ### resource: are artifacts ###
     resources:
-      - name: src
-        type: git
+      - name: src    ### has a name
+        type: git    ### has a type (built into Tekton)
+
   outputs:
+    ### resources can be both input & output
     resources:
       - name: img
         type: image
+
   steps:
     - name: step-00
       image: busybox

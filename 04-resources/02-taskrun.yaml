@@ -11,12 +11,14 @@ spec:
     params:
       - name: app
         value: voting-api
+
     resources:
-      - resourceRef:
+      - name: src
+        resourceRef:
           name: api-repo
-        name: src
+
   outputs:
     resources:
-      - resourceRef:
+      - name: img   ### must be the name of the resource in task
+        resourceRef:
           name: api-image
-        name: img

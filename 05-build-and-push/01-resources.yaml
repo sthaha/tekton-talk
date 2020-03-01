@@ -7,7 +7,7 @@ spec:
   type: image
   params:
     - name: url
-      value: image-registry.openshift-image-registry.svc:5000/tekton-talk/ui:latest
+      value: image-registry.openshift-image-registry.svc:5000/sthaha-tekton/ui:latest
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource

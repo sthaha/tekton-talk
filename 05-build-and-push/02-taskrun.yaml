@@ -15,6 +15,7 @@ spec:
       - resourceRef:
           name: ui-repo
         name: src
+
   outputs:
     resources:
       - name: img

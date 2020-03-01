@@ -6,7 +6,8 @@ metadata:
 spec:
   taskRef:
     name: greetings-task
+  ### Set parameters ###
   inputs:
     params:
-      - name: greetings
-        value: hola
+      - name: greetings   ### <<< name of the param
+        value: hola, 你好 , bonjour, नमस्ते

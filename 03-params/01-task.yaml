@@ -4,11 +4,13 @@ kind: Task
 metadata:
   name: greetings-task
 spec:
+  ### Inputs ###
   inputs:
     params:
       - name: greetings
         type: string
         default: hello
+  ###  ------------ ###
   steps:
     - name: step-1
       image: busybox
@@ -16,6 +18,7 @@ spec:
         - echo
       args:
         - $(inputs.params.greetings), world
+          # ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     - name: step-2-run-a-script
       image: busybox
@@ -23,3 +26,4 @@ spec:
         #!/bin/sh
         set +x
         echo "$(inputs.params.greetings), I am at $(pwd)"
+        #       ^^^^^^^^^^^^^^^^^^^^^^

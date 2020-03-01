@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1alpha1
 kind: TaskRun
 metadata:
-  name: helloworld-taskrun-02
+  name: helloworld-taskrun-0102
 spec:
   taskSpec:
     steps:
@@ -29,4 +29,4 @@ spec:
         image: node
         script: |
           #!/usr/bin/env node
-          console.log("can run js scripts as well ♥️")
+          console.log("🕸  can run js scripts as well ♥️")

@@ -8,8 +8,9 @@ spec:
   inputs:
     params:
       - name: greetings
-        type: string
+        type: string  ### | array
         default: hello
+        description: what is your greeting message
   ###  ------------ ###
   steps:
     - name: step-1

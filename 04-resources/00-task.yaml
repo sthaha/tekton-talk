@@ -29,4 +29,4 @@ spec:
 
         echo Building app   $(inputs.params.app)
         echo Going to clone $(inputs.resources.src.url)
-        echo Outputimg      $(outputs.resources.img.url)
+        echo Output img     $(outputs.resources.img.url)

@@ -4,6 +4,3 @@
 [submodule "07-pipelines"]
 	path = 07-pipelines
 	url = gh:openshift/pipelines-tutorial
-[submodule "08-pipelines/triggers"]
-	path = 08-pipelines/triggers
-	url = gh:tektoncd/triggers

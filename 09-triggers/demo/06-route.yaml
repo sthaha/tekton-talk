@@ -1,0 +1,11 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: triggers
+  name: build-and-deploy-api
+spec:
+  to:
+    kind: Service
+    name: el-build-and-deploy-api
+    weight: 100

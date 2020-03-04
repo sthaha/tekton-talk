@@ -1,0 +1,68 @@
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: build-and-deploy-api
+
+spec:
+  params:
+    - name: git-revision
+      description: The git revision
+      default: master
+    - name: git-repo-url
+      description: The git repository url
+    - name: namespace
+      description: The namespace to create the resources
+
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: build-and-deploy-api-$(uid)
+        namespace: $(params.namespace)
+      spec:
+        serviceAccountName: pipeline
+        pipelineRef:
+          name: build-and-deploy-api
+        resources:
+          - name: api-repo
+            resourceSpec:
+              type: git
+              params:
+                - name: revision
+                  value: $(params.git-revision)
+                - name: url
+                  value: $(params.git-repo-url)
+
+          - name: api-image
+            resourceSpec:
+              type: image
+              params:
+                - name: url
+                  value: image-registry.openshift-image-registry.svc:5000/$(params.namespace)/api:latest
+---
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: build-and-deploy-api
+
+spec:
+  params:
+    - name: git-revision
+      value: $(body.head_commit.id)
+    - name: namespace
+      value: sthaha-triggers
+    - name: git-repo-url
+      value: "https://github.com/$(body.repository.full_name)"
+
+---
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: build-and-deploy-api
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - bindings:
+        - name: build-and-deploy-api
+      template:
+        name: build-and-deploy-api

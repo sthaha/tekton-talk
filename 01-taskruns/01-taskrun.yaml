@@ -9,7 +9,5 @@ spec:
     steps:
       - name: echo
         image: busybox
-        command:
-          - echo
-        args:
-          - hello, world
+        command: [ echo ]
+        args: [ "hello, world" ]

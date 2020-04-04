@@ -7,3 +7,6 @@
 [submodule "09-triggers/triggers"]
 	path = 09-triggers/triggers
 	url = gh:tektoncd/triggers
+[submodule "09-triggers/demo/vote-api"]
+  path = 09-triggers/demo/vote-api
+  url = gh:sthaha/vote-api
